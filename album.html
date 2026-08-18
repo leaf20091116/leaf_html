@@ -27,43 +27,35 @@ tailwind.config = {
 *{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth}
 body{min-height:100vh;transition:background 0.45s ease,color 0.45s ease;font-family:system-ui,-apple-system,sans-serif}
-
 /* 两套风格 */
 .style-modern{background:#f7f9fc;color:#1f2937}
 .style-retro{background:#e6dfd2;background-image:radial(#d9cebe 0.7px, transparent 0.7px);background-size:18px 18px;color:#5c4332}
-
 /* 书本相册 */
 .album-book{position:relative;perspective:1600px;margin-top:2rem}
 .album-wrap{overflow:hidden;min-h-[720px]}
-
 /* 整页容器 */
 .page-block{position:absolute;width:100%;display:grid;grid-template-columns:1fr 1fr;gap:2rem;transition:transform 0.55s cubic-bezier(0.2,0,0.2,1.3),opacity 0.5s}
 .page-hide-left{transform:translateX(-130%);opacity:0}
 .page-hide-right{transform:translateX(130%);opacity:0}
 .page-show{transform:translateX(0);opacity:1}
-
 /* 纸质版面 */
 .paper-page{padding:2rem;border-radius:16px;box-shadow:0 8px 30px rgba(0,0,0.06)}
 .style-modern .paper-page{background:#ffffff;border:1px solid #e2e8f0}
 .style-retro .paper-page{background:#fff8ec;border:3px solid #b89c7c;box-shadow:0 12px 40px rgba(110,80,40,0.12)}
-
 /* 照片卡片 窄边框突出图片 */
 .photo-card{transition:all 0.32s cubic-bezier(0.2,0,0.2,1.3);margin-bottom:1.2rem}
 .photo-card:hover{transform:translateY(-4px);box-shadow:0 12px 24px rgba(0,0,0.12)}
 .style-modern .photo-card{border-radius:12px;overflow:hidden;background:#fff;border:1px solid #eee}
 .style-retro .photo-card{border-radius:2px;background:#fffdf6;border:4px solid #fffdf6;box-shadow:0 6px 18px rgba(70,45,20,0.1)}
 .photo-card img{display:block;width:100%;height:260px;object-cover}
-
 /* 照片文字 */
 .photo-card p{margin-top:0.9rem;line-height:1.75;font-size:0.95rem}
 .style-modern .photo-card p{color:#4b5563}
 .style-retro .photo-card p{color:#6b4f3e}
-
 /* 标题字体优化 */
 h3{font-weight:600;letter-spacing:0.5px}
 .style-modern h3{color:#111827}
 .style-retro h3{color:#4a3528}
-
 /* 按钮 */
 .btn{transition:all 0.25s cubic-bezier(0.2,0,0.2,1.4);border:none;font-weight:500}
 .btn:active{transform:scale(0.96)}
@@ -72,11 +64,9 @@ h3{font-weight:600;letter-spacing:0.5px}
 .page-controls button{background:#f3f4f6;color:#1f2937;border-radius:999px;padding:0.45rem 1rem;font-size:0.9rem}
 .page-controls button:hover{background:#e5e7eb}
 .page-controls input{width:3.5rem;text-align:center;border:1px solid #d1d5db;border-radius:0.5rem;padding:0.4rem;font-size:0.95rem}
-
 /* 右上角时钟 */
 .clock-box{position:fixed;top:16px;right:16px;z-50;padding:8px 14px;border-radius:99px;background:#fff;box-shadow:0 3px 10px rgba(0,0,0.08);display:flex;gap:8px;align-items:center;font-family:monospace;font-size:14px}
 .style-retro .clock-box{background:#fff8ec;border:1px solid #b89c7c}
-
 .split-line{height:1px;width:100%;margin:1.2rem 0}
 .style-modern .split-line{background:#e2e8f0}
 .style-retro .split-line{background:#b89c7c}
@@ -84,12 +74,10 @@ h3{font-weight:600;letter-spacing:0.5px}
 </style>
 </head>
 <body class="style-modern">
-
 <div class="clock-box">
 <i class="fa fa-clock-o text-main"></i>
 <span id="clockText"></span>
 </div>
-
 <div class="max-w-6xl mx-auto px-4 py-12">
   <div class="flex flex-wrap justify-between items-center mb-10 gap-4">
     <h1 class="text-3xl font-bold">📖 纸质回忆相册</h1>
@@ -113,79 +101,132 @@ h3{font-weight:600;letter-spacing:0.5px}
       </button>
     </div>
   </div>
-
   <div class="album-book">
-    <div class="album-wrap">
-      <!-- 第1页 -->
-      <div class="page-block page-show" data-page="1">
-        <div class="paper-page" data-side="left">
-          <h3>2025.12.12 · 姥姥</h3>
-          <div class="split-line"></div>
-          <div class="photo-card" data-id="1_left_01">
-            <img src="https://img.remit.ee/api/file/BQACAgUAAyEGAASHRsPbAAEZSIRqgefCx0z3nFzoyqylA47zQ9Dk6QACrycAAnYcEVQeR68oufkP1T0E.jpg"
-            <p>"午后阳光"</p>
-          </div>
-          <div class="photo-card" data-id="1_left_02">
-            <img src="https://picsum.photos/id/1022/600/400">
-            <p>山路旁的小野花，不起眼却很治愈。</p>
-          </div>
-        </div>
-        <div class="paper-page" data-side="right">
-          <h3>2026.07.20 · 落日码头</h3>
-          <div class="split-line"></div>
-          <div class="photo-card" data-id="1_right_01">
-            <img src="https://picsum.photos/id/1039/600/400">
-            <p>落日把海面染成橘红色，海浪慢慢拍打岸边，站在这里发呆半小时，什么烦恼都暂时放下了。</p>
-          </div>
-          <div class="photo-card" data-id="1_right_02">
-            <img src="https://picsum.photos/id/1022/600">
-            <p>何尝不是一种失去呢。</p>
-          </div>
-        </div>
-      </div>
-      <!-- 第2页 -->
-      <div class="page-block page-hide-right" data-page="2">
-        <div class="paper-page" data-side="left">
-          <h3>2026.07.26 · 林间小路</h3>
-          <div class="split-line"></div>
-          <div class="photo-card" data-id="2_left_01">
-            <img src="https://picsum.photos/id/1043/600/400">
-            <p>树荫层层叠叠，阳光透过树叶碎成光斑，走路的时候脚步都不自觉放轻。</p>
-          </div>
-        </div>
-        <div class="paper-page" data-side="right">
-          <h3>2026.07.28 · 郊外花海</h3>
-          <div class="split-line"></div>
-          <div class="photo-card" data-id="2_right_01">
-            <img src="https://picsum.photos/id/1048/600">
-            <p>大片小花铺在田野里，风一吹整片花海摇晃，留住温柔夏日。</p>
-          </div>
-        </div>
-      </div>
-      <!-- 第3页 -->
-      <div class="page-block page-hide-right" data-page="3">
-        <div class="paper-page" data-side="left">
-          <h3>2026.08.03 · 晴空云海</h3>
-          <div class="split-line"></div>
-          <div class="photo-card" data-id="3_left_01">
-            <img src="https://picsum.photos/id/1060/600/400">
-            <p>登上高处看见整片云海，云朵层层堆叠，天空干净通透。</p>
-          </div>
-        </div>
-        <div class="paper-page" data-side="right">
-          <h3>2026.08.05 · 城市黄昏</h3>
-          <div class="split-line"></div>
-          <div class="photo-card" data-id="3_right_01">
-            <img src="https://picsum.photos/id/1071/600/400">
-            <p>城市灯光慢慢亮起，黄昏淡紫色天空，平凡日子也有好看瞬间。</p>
-          </div>
-        </div>
-      </div>
+    <div class="album-wrap" id="albumWrap">
+      <!-- 全部页面由JS photosData数组自动渲染，不需要手写html -->
     </div>
   </div>
 </div>
-
 <script>
+// ====================== 【在这里新增/修改照片，固定格式】 ======================
+// 仿照mc服务器historyData写法！！！
+// 每一项代表相册的一页，一页分为 left左版面、right右版面
+// 每个版面：title标题，photos数组放多张照片，每张照片 img图片地址 + desc照片文字
+/*
+新增一页复制下面模板：
+{
+  pageNum:4,
+  left:{
+    title:"2026.xx.xx · 标题名字",
+    photos:[
+      {img:"图片链接", desc:"照片描述文字"},
+      {img:"图片链接", desc:"照片描述文字"},
+    ]
+  },
+  right:{
+    title:"2026.xx.xx · 标题名字",
+    photos:[
+      {img:"图片链接", desc:"照片描述文字"},
+    ]
+  }
+}
+*/
+const photosData = [
+  {
+    pageNum:1,
+    left:{
+      title:"2025.12.12 · 姥姥",
+      photos:[
+        {img:"https://img.remit.ee/api/file/BQACAgUAAyEGAASHRsPbAAEZSIRqgefCx0z3nFzoyqylA47zQ9Dk6QACrycAAnYcEVQeR68oufkP1T0E.jpg", desc:"\"午后阳光\""},
+        {img:"https://picsum.photos/id/1022/600/400", desc:"山路旁的小野花，不起眼却很治愈。"}
+      ]
+    },
+    right:{
+      title:"2026.07.20 · 落日码头",
+      photos:[
+        {img:"https://picsum.photos/id/1039/600/400", desc:"落日把海面染成橘红色，海浪慢慢拍打岸边，站在这里发呆半小时，什么烦恼都暂时放下了。"},
+        {img:"https://picsum.photos/id/1022/600", desc:"何尝不是一种失去呢。"}
+      ]
+    }
+  },
+  {
+    pageNum:2,
+    left:{
+      title:"2026.07.26 · 林间小路",
+      photos:[
+        {img:"https://picsum.photos/id/1043/600/400", desc:"树荫层层叠叠，阳光透过树叶碎成光斑，走路的时候脚步都不自觉放轻。"}
+      ]
+    },
+    right:{
+      title:"2026.07.28 · 郊外花海",
+      photos:[
+        {img:"https://picsum.photos/id/1048/600", desc:"大片小花铺在田野里，风一吹整片花海摇晃，留住温柔夏日。"}
+      ]
+    }
+  },
+  {
+    pageNum:3,
+    left:{
+      title:"2026.08.03 · 晴空云海",
+      photos:[
+        {img:"https://picsum.photos/id/1060/600/400", desc:"登上高处看见整片云海，云朵层层堆叠，天空干净通透。"}
+      ]
+    },
+    right:{
+      title:"2026.08.05 · 城市黄昏",
+      photos:[
+        {img:"https://picsum.photos/id/1071/600/400", desc:"城市灯光慢慢亮起，黄昏淡紫色天空，平凡日子也有好看瞬间。"}
+      ]
+    }
+  }
+];
+// ====================== 配置结束，下面是渲染逻辑，新手不要改动 ======================
+
+// 根据数组自动渲染相册页面DOM
+function renderAlbumHtml(){
+  const wrap = document.getElementById("albumWrap");
+  wrap.innerHTML = "";
+  photosData.forEach(pageItem=>{
+    // 组装左侧版面html
+    let leftPhotoHtml = "";
+    pageItem.left.photos.forEach(p=>{
+      leftPhotoHtml += `
+      <div class="photo-card">
+        <img src="${p.img}">
+        <p>${p.desc}</p>
+      </div>
+      `
+    })
+    //组装右侧版面html
+    let rightPhotoHtml = "";
+    pageItem.right.photos.forEach(p=>{
+      rightPhotoHtml += `
+      <div class="photo-card">
+        <img src="${p.img}">
+        <p>${p.desc}</p>
+      </div>
+      `
+    })
+
+    const pageDom = document.createElement("div");
+    pageDom.className = "page-block";
+    pageDom.dataset.page = pageItem.pageNum;
+    pageDom.innerHTML = `
+        <div class="paper-page" data-side="left">
+          <h3>${pageItem.left.title}</h3>
+          <div class="split-line"></div>
+          ${leftPhotoHtml}
+        </div>
+        <div class="paper-page" data-side="right">
+          <h3>${pageItem.right.title}</h3>
+          <div class="split-line"></div>
+          ${rightPhotoHtml}
+        </div>
+    `;
+    wrap.appendChild(pageDom);
+  })
+}
+
 function updateClock(){
   const now = new Date();
   const timeStr = now.toLocaleString("zh-CN",{
@@ -196,7 +237,6 @@ function updateClock(){
 }
 updateClock();
 setInterval(updateClock);
-
 // 单按钮切换风格
 const themeBtn = document.getElementById("themeBtn");
 const themeText = document.getElementById("themeText");
@@ -213,6 +253,9 @@ themeBtn.onclick = ()=>{
   }
 }
 
+// 先渲染页面DOM，再执行分页逻辑！
+renderAlbumHtml();
+
 // 分页逻辑
 let currentPage = 1;
 const allPages = document.querySelectorAll(".page-block");
@@ -222,7 +265,6 @@ const pageInput = document.getElementById("pageInput");
 const prevBtn = document.getElementById("prevBtn");
 const nextBtn = document.getElementById("nextBtn");
 const jumpBtn = document.getElementById("jumpBtn");
-
 function renderPage(target){
   if(target < 1 || target > totalPageNum) return;
   allPages.forEach(block=>{
@@ -245,6 +287,8 @@ jumpBtn.onclick = ()=>{
   const num = Number(pageInput.value);
   if(!isNaN(num)) renderPage(num);
 }
+// 初始打开第一页
+renderPage(1);
 </script>
 </body>
 </html>
