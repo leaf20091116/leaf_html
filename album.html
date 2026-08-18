@@ -29,33 +29,115 @@ html{scroll-behavior:smooth}
 body{min-height:100vh;transition:background 0.45s ease,color 0.45s ease;font-family:system-ui,-apple-system,sans-serif}
 /* 两套风格 */
 .style-modern{background:#f7f9fc;color:#1f2937}
-.style-retro{background:#e6dfd2;background-image:radial(#d9cebe 0.7px, transparent 0.7px);background-size:18px 18px;color:#5c4332}
-/* 书本相册 */
-.album-book{position:relative;perspective:1600px;margin-top:2rem}
-.album-wrap{overflow:hidden;min-h-[720px]}
-/* 整页容器 */
-.page-block{position:absolute;width:100%;display:grid;grid-template-columns:1fr 1fr;gap:2rem;transition:transform 0.55s cubic-bezier(0.2,0,0.2,1.3),opacity 0.5s}
-.page-hide-left{transform:translateX(-130%);opacity:0}
-.page-hide-right{transform:translateX(130%);opacity:0}
+.style-retro{
+  background:#e6dfd2;
+  background-image:radial(#d9cebe 0.7px, transparent 0.7px);
+  background-size:18px 18px;
+  color:#5c4332;
+}
+
+/* ========== 真实书本相册核心样式 ========== */
+.album-book{
+  position:relative;
+  perspective:1800px;
+  margin-top:2rem;
+}
+.album-wrap{
+  position: relative;
+  min-height: 800px;
+}
+/* 一对翻开的页面（左页+右页，带中间书脊） */
+.page-block{
+  position:absolute;
+  width:100%;
+  display:flex;
+  justify-content:center;
+  gap:0;
+  transition:transform 0.6s cubic-bezier(0.2,0,0.2,1.25), opacity 0.6s;
+}
+.page-hide-left{transform:translateX(-140%);opacity:0}
+.page-hide-right{transform:translateX(140%);opacity:0}
 .page-show{transform:translateX(0);opacity:1}
-/* 纸质版面 */
-.paper-page{padding:2rem;border-radius:16px;box-shadow:0 8px 30px rgba(0,0,0.06)}
-.style-modern .paper-page{background:#ffffff;border:1px solid #e2e8f0}
-.style-retro .paper-page{background:#fff8ec;border:3px solid #b89c7c;box-shadow:0 12px 40px rgba(110,80,40,0.12)}
-/* 照片卡片 窄边框突出图片 */
-.photo-card{transition:all 0.32s cubic-bezier(0.2,0,0.2,1.3);margin-bottom:1.2rem}
-.photo-card:hover{transform:translateY(-4px);box-shadow:0 12px 24px rgba(0,0,0.12)}
-.style-modern .photo-card{border-radius:12px;overflow:hidden;background:#fff;border:1px solid #eee}
-.style-retro .photo-card{border-radius:2px;background:#fffdf6;border:4px solid #fffdf6;box-shadow:0 6px 18px rgba(70,45,20,0.1)}
-.photo-card img{display:block;width:100%;height:260px;object-cover}
-/* 照片文字 */
-.photo-card p{margin-top:0.9rem;line-height:1.75;font-size:0.95rem}
+
+/* 单张书页：真实纸张效果 */
+.paper-page{
+  width:47%;
+  padding:2rem;
+  position:relative;
+  box-shadow: 0 10px 35px rgba(0,0,0,0.13);
+}
+/* 中间书脊缝隙阴影，模拟书本对折 */
+.paper-page[data-side="left"]{
+  border-radius:18px 4px 4px 18px;
+  box-shadow: -12px 8px 30px rgba(0,0,0,0.12), inset -6px 0 14px rgba(0,0,0,0.06);
+}
+.paper-page[data-side="right"]{
+  border-radius:4px 18px 18px 4px;
+  box-shadow: 12px 8px 30px rgba(0,0,0,0.12), inset 6px 0 14px rgba(0,0,0,0.06);
+}
+
+.style-modern .paper-page{
+  background:#ffffff;
+  border:1px solid #e2e8f0;
+}
+.style-retro .paper-page{
+  background:#fff8ec;
+  border:2px solid #d4bfaa;
+  /* 纸张细微杂色纹理 */
+  background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+}
+
+/* 书页内部照片网格：自动排布，可以放很多照片，自适应 */
+.photo-grid{
+  display:grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px,1fr));
+  gap:1.4rem;
+  margin-top:1rem;
+}
+
+/* 照片卡片 相册拍立得质感 */
+.photo-card{
+  transition:all 0.32s cubic-bezier(0.2,0,0.2,1.3);
+  display:flex;
+  flex-direction:column;
+}
+.photo-card:hover{transform:translateY(-6px);box-shadow:0 14px 28px rgba(0,0,0,0.15)}
+
+.style-modern .photo-card{
+  background:#fff;
+  border:1px solid #eee;
+  border-radius:10px;
+  overflow:hidden;
+  padding-bottom:0.7rem;
+}
+.style-retro .photo-card{
+  background:#fffdf6;
+  /* 拍立得白边效果！真实相册相片白边框 */
+  padding:10px;
+  box-shadow:0 6px 18px rgba(70,45,20,0.14);
+}
+
+.photo-card img{
+  display:block;
+  width:100%;
+  height:170px;
+  object-fit:cover;
+}
+/* 照片下面文字说明 */
+.photo-card p{
+  margin-top:0.7rem;
+  line-height:1.6;
+  font-size:0.88rem;
+  padding:0 0.4rem;
+}
 .style-modern .photo-card p{color:#4b5563}
 .style-retro .photo-card p{color:#6b4f3e}
+
 /* 标题字体优化 */
 h3{font-weight:600;letter-spacing:0.5px}
 .style-modern h3{color:#111827}
 .style-retro h3{color:#4a3528}
+
 /* 按钮 */
 .btn{transition:all 0.25s cubic-bezier(0.2,0,0.2,1.4);border:none;font-weight:500}
 .btn:active{transform:scale(0.96)}
@@ -64,13 +146,35 @@ h3{font-weight:600;letter-spacing:0.5px}
 .page-controls button{background:#f3f4f6;color:#1f2937;border-radius:999px;padding:0.45rem 1rem;font-size:0.9rem}
 .page-controls button:hover{background:#e5e7eb}
 .page-controls input{width:3.5rem;text-align:center;border:1px solid #d1d5db;border-radius:0.5rem;padding:0.4rem;font-size:0.95rem}
+
 /* 右上角时钟 */
 .clock-box{position:fixed;top:16px;right:16px;z-50;padding:8px 14px;border-radius:99px;background:#fff;box-shadow:0 3px 10px rgba(0,0,0.08);display:flex;gap:8px;align-items:center;font-family:monospace;font-size:14px}
 .style-retro .clock-box{background:#fff8ec;border:1px solid #b89c7c}
+
 .split-line{height:1px;width:100%;margin:1.2rem 0}
 .style-modern .split-line{background:#e2e8f0}
 .style-retro .split-line{background:#b89c7c}
+
 .page-controls{display:flex;align-items:center;gap:0.9rem;flex-wrap:wrap}
+
+/* 小屏幕适配，手机下左右页改成上下堆叠 */
+@media(max-width: 900px){
+  .page-block{
+    flex-direction: column;
+    align-items:center;
+  }
+  .paper-page{
+    width:94%;
+  }
+  .paper-page[data-side="left"]{
+    border-radius:14px;
+    box-shadow:0 8px 24px rgba(0,0,0,0.1);
+  }
+  .paper-page[data-side="right"]{
+    border-radius:14px;
+    box-shadow:0 8px 24px rgba(0,0,0,0.1);
+  }
+}
 </style>
 </head>
 <body class="style-modern">
@@ -103,30 +207,31 @@ h3{font-weight:600;letter-spacing:0.5px}
   </div>
   <div class="album-book">
     <div class="album-wrap" id="albumWrap">
-      <!-- 全部页面由JS photosData数组自动渲染，不需要手写html -->
+      <!-- JS自动渲染全部书页 -->
     </div>
   </div>
 </div>
 <script>
-// ====================== 【在这里新增/修改照片，固定格式】 ======================
-// 仿照mc服务器historyData写法！！！
-// 每一项代表相册的一页，一页分为 left左版面、right右版面
-// 每个版面：title标题，photos数组放多张照片，每张照片 img图片地址 + desc照片文字
+// ====================== 【照片配置区，新手只改这里】 ======================
 /*
-新增一页复制下面模板：
+新增一页模板复制：
 {
   pageNum:4,
   left:{
-    title:"2026.xx.xx · 标题名字",
+    title:"2026.xx.xx · 标题",
     photos:[
-      {img:"图片链接", desc:"照片描述文字"},
-      {img:"图片链接", desc:"照片描述文字"},
+      {img:"图片链接", desc:"照片文字"},
+      {img:"图片链接", desc:"照片文字"},
+      {img:"图片链接", desc:"照片文字"},
     ]
   },
   right:{
-    title:"2026.xx.xx · 标题名字",
+    title:"2026.xx.xx · 标题",
     photos:[
-      {img:"图片链接", desc:"照片描述文字"},
+      {img:"图片链接", desc:"照片文字"},
+      {img:"图片链接", desc:"照片文字"},
+      {img:"图片链接", desc:"照片文字"},
+      {img:"图片链接", desc:"照片文字"},
     ]
   }
 }
@@ -180,15 +285,15 @@ const photosData = [
     }
   }
 ];
-// ====================== 配置结束，下面是渲染逻辑，新手不要改动 ======================
+// ====================== 配置结束，下面逻辑不要修改 ======================
 
-// 根据数组自动渲染相册页面DOM
+// 渲染书本页面
 function renderAlbumHtml(){
   const wrap = document.getElementById("albumWrap");
   wrap.innerHTML = "";
   photosData.forEach(pageItem=>{
-    // 组装左侧版面html
-    let leftPhotoHtml = "";
+    // 渲染左页照片网格
+    let leftPhotoHtml = `<div class="photo-grid">`;
     pageItem.left.photos.forEach(p=>{
       leftPhotoHtml += `
       <div class="photo-card">
@@ -197,8 +302,10 @@ function renderAlbumHtml(){
       </div>
       `
     })
-    //组装右侧版面html
-    let rightPhotoHtml = "";
+    leftPhotoHtml += `</div>`;
+
+    //渲染右页照片网格
+    let rightPhotoHtml = `<div class="photo-grid">`;
     pageItem.right.photos.forEach(p=>{
       rightPhotoHtml += `
       <div class="photo-card">
@@ -207,6 +314,7 @@ function renderAlbumHtml(){
       </div>
       `
     })
+    rightPhotoHtml += `</div>`;
 
     const pageDom = document.createElement("div");
     pageDom.className = "page-block";
@@ -237,7 +345,8 @@ function updateClock(){
 }
 updateClock();
 setInterval(updateClock);
-// 单按钮切换风格
+
+// 切换主题
 const themeBtn = document.getElementById("themeBtn");
 const themeText = document.getElementById("themeText");
 themeBtn.onclick = ()=>{
@@ -253,10 +362,9 @@ themeBtn.onclick = ()=>{
   }
 }
 
-// 先渲染页面DOM，再执行分页逻辑！
 renderAlbumHtml();
 
-// 分页逻辑
+//分页逻辑
 let currentPage = 1;
 const allPages = document.querySelectorAll(".page-block");
 const totalPageNum = allPages.length;
@@ -265,6 +373,7 @@ const pageInput = document.getElementById("pageInput");
 const prevBtn = document.getElementById("prevBtn");
 const nextBtn = document.getElementById("nextBtn");
 const jumpBtn = document.getElementById("jumpBtn");
+
 function renderPage(target){
   if(target < 1 || target > totalPageNum) return;
   allPages.forEach(block=>{
@@ -287,7 +396,6 @@ jumpBtn.onclick = ()=>{
   const num = Number(pageInput.value);
   if(!isNaN(num)) renderPage(num);
 }
-// 初始打开第一页
 renderPage(1);
 </script>
 </body>
