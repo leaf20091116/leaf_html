@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>日记本 | 高中生个人娱乐小博客</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        main: '#3b82f6',
+                        mainSoft: '#60a5fa',
+                        sideBg: '#f8fafc',
+                        cardBg: '#ffffff',
+                        textPrimary: '#0f172a',
+                        textSecondary: '#64748b',
+                        hoverBlue: '#f1f5ff',
+                        activeBlue: '#2563eb'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background:
+                radial-gradient(circle at 12% 12%, rgba(59, 130, 246, 0.45), transparent 28%),
+                radial-gradient(circle at 88% 8%, rgba(168, 85, 247, 0.35), transparent 32%),
+                linear-gradient(135deg, #ffffff 0%, #f8fafc 45%, #f0f4ff 100%);
+            min-height: 100vh;
+            color: #0f172a;
+            font-family: 'system-ui', -apple-system, sans-serif;
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, #3b82f6, #8b5cf6);
+            border-radius: 999px;
+        }
+
+        .top-header {
+            backdrop-filter: blur(22px);
+            -webkit-backdrop-filter: blur(22px);
+            background: rgba(255, 255, 255, 0.72);
+            border-bottom: 1px solid rgba(226, 232, 240, 0.88);
+        }
+
+        .clock-pill {
+            background: rgba(59, 130, 246, 0.08);
+            border: 1px solid rgba(59, 130, 246, 0.18);
+        }
+
+        .back-btn {
+            transition: all 0.38s cubic-bezier(0.2, 0, 0.2, 1.4);
+            transform: scale(1);
+        }
+        .back-btn:hover {
+            transform: scale(1.06) translateX(-4px);
+            box-shadow: 0 8px 22px rgba(37,99,235,0.25);
+        }
+
+        .diary-card {
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            background: rgba(255, 255, 255, 0.78);
+            border: 1px solid rgba(226, 232, 240, 0.86);
+            box-shadow: 0 18px 45px rgba(15, 23, 42, 0.08);
+        }
+
+        .diary-item {
+            transition: all 0.32s cubic-bezier(0.2,0,0.2,1.2);
+        }
+        .diary-item:hover {
+            background: rgba(59,130,246,0.04);
+            transform: translateX(4px);
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6, #ec4899);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .soft-divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.22), transparent);
+        }
+    </style>
+</head>
+<body class="text-slate-800">
+
+<!-- 顶部导航栏 和主页统一 -->
+<header class="top-header w-full sticky top-0 z-20">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
+        <h1 class="text-xl md:text-2xl font-bold gradient-text">✨ 我的个人博客</h1>
+        <div class="clock-pill text-sm md:text-base font-mono text-slate-600 flex items-center gap-2 px-4 py-2 rounded-full">
+            <i class="fa fa-clock-o text-main"></i>
+            <span id="clock"></span>
+        </div>
+    </div>
+</header>
+
+<!-- 主体区域 -->
+<div class="max-w-7xl mx-auto pt-8 px-2 pb-10">
+    <!-- 返回主页按钮 Q弹动效 -->
+    <a href="index.html" class="back-btn inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-main to-activeBlue text-white shadow-lg">
+        <i class="fa fa-arrow-left"></i> 返回博客主页
+    </a>
+
+    <!-- 日记主体卡片 -->
+    <div class="diary-card mt-6 p-6 md:p-8 rounded-2xl">
+        <h2 class="text-2xl md:text-3xl font-bold mb-8 gradient-text flex items-center gap-3">
+            <i class="fa fa-book text-main"></i> 个人日记本
+        </h2>
+
+        <!-- 日记1 -->
+        <div class="diary-item border-b border-slate-200 pb-6 mb-6 pl-2 rounded-lg">
+            <h3 class="text-lg font-semibold text-slate-800 mb-2 flex items-center gap-2">
+                <i class="fa fa-calendar text-main"></i>2026-08-15
+            </h3>
+            <div class="text-slate-600 leading-relaxed pl-6">
+                <p>今天完善了自己的个人博客网页，新增日记页面，所有功能都有豆包操刀完成</p>
+                <p class="mt-2">写代码的时候踩了不少样式适配的坑，慢慢调整后页面整洁好看，很有成就感。</p>
+                <p class="mt-2">晚上打算整理一点短句和文案更新到博客里。</p>
+            </div>
+        </div>
+
+       </div>
+
+        <div class="soft-divider my-8"></div>
+
+        <!-- 新增日记复制模板 -->
+        <div class="p-4 bg-sideBg rounded-xl">
+            <h4 class="font-bold text-main mb-2">📝 新增日记复制模板</h4>
+<pre class="text-sm text-slate-600 overflow-x-auto">
+&lt;div class="diary-item border-b border-slate-200 pb-6 mb-6 pl-2 rounded-lg"&gt;
+    &lt;h3 class="text-lg font-semibold text-slate-800 mb-2 flex items-center gap-2"&gt;
+        &lt;i class="fa fa-calendar text-main"&gt;&lt;/i&gt;YYYY-MM-DD
+    &lt;/h3&gt;
+    &lt;div class="text-slate-600 leading-relaxed pl-6"&gt;
+        &lt;p&gt;日记内容第一行&lt;/p&gt;
+        &lt;p class="mt-2"&gt;日记内容第二行&lt;/p&gt;
+    &lt;/div&gt;
+&lt;/div&gt;
+</pre>
+        </div>
+    </div>
+</div>
+
+<!-- 底部版权 -->
+<footer class="py-8 text-center text-slate-400 text-sm mt-10">
+    高中生个人娱乐博客 · 日记本页面
+</footer>
+
+<script>
+    // 和主页共用时钟代码
+    function updateClock(){
+        let now = new Date();
+        let str = now.toLocaleString('zh-CN',{
+            year:'numeric',month:'2-digit',day:'2-digit',
+            hour:'2-digit',minute:'2-digit',second:'2-digit'
+        });
+        document.getElementById('clock').innerText = str;
+    }
+    updateClock();
+    setInterval(updateClock,1000);
+</script>
+</body>
+</html>

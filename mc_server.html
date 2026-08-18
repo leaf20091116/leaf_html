@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leaf服务器介绍</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        main: '#3b82f6',
+                        mainSoft: '#60a5fa',
+                        sideBg: '#f8fafc',
+                        cardBg: '#ffffff',
+                        textPrimary: '#0f172a',
+                        textSecondary: '#64748b',
+                        hoverBlue: '#f1f5ff',
+                        activeBlue: '#2563eb'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        html {
+            scroll-behavior: smooth;
+        }
+        body {
+            background:
+                radial-gradient(circle at 12% 12%, rgba(59, 130, 0.45), transparent 28%),
+                radial-gradient(circle at 88% 8%, rgba(168, 85, 247, 0.35), transparent 32%),
+                linear-gradient(135deg, #ffffff 0%, #f8fafc 45%, #f0f4ff 100%);
+            min-height: 100vh;
+            color: #0f172a;
+            font-family: 'system-ui', -apple-system, sans-serif;
+        }
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, #3b82f6, #8b5cf6);
+            border-radius: 999px;
+        }
+        .top-header {
+            backdrop-filter: blur(22px);
+            -webkit-backdrop-filter: blur(22px);
+            background: rgba(255, 255, 255, 0.72);
+            border-bottom: 1px solid rgba(226, 232, 240, 0.88);
+        }
+        .side-bar {
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            background: rgba(248, 252, 252, 0.82);
+            border: 1px solid rgba(226, 232, 240, 0.9);
+        }
+        .side-item {
+            transition:
+                background 0.4s cubic-bezier(0.2, 0, 0.2, 1.4),
+                color 0.4s cubic-bezier(0.2, 0, 0.2, 1.4),
+                transform 0.4s cubic-bezier(0.2, 0, 0.2, 1.4),
+                box-shadow 0.4s cubic-bezier(0.2, 0, 0.2, 1.4);
+            transform: scale(1) translateZ(0);
+            will-change: transform, background, box-shadow;
+        }
+        .side-item:hover {
+            background: rgba(59, 130, 246, 0.08);
+            transform: scale(1.04) translateX(4px);
+            box-shadow: 0 8px 20px rgba(59, 130, 246, 0.16);
+        }
+        .side-item.active {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            color: white;
+            transform: scale(1.06) translateX(6px);
+            box-shadow: 0 10px 30px rgba(37, 99, 235, 0.22);
+        }
+        .sub-item{
+            margin-left:12px;
+        }
+        .content-box {
+            display: none;
+            opacity: 0;
+            transform: translateY(16px) scale(0.98);
+            transition: opacity 0.45s cubic-bezier(0.2,0,0.2,1.2), transform 0.45s cubic-bezier(0.2,0,0.2,1.2);
+        }
+        .content-box.show {
+            display: block;
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+        .article-card {
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            background: rgba(255, 255, 255, 0.78);
+            border: 1px solid rgba(226, 232, 240, 0.86);
+            box-shadow: 0 18px 45px rgba(15, 23, 42, 0.08);
+        }
+        /* ========== 右上角祝福语面板：增强毛玻璃+高透高级感 ========== */
+        .wish-panel {
+            backdrop-filter: blur(28px);
+            -webkit-backdrop-filter: blur(28px);
+            background: rgba(255, 255, 255, 0.32);
+            border: 1px solid rgba(255, 255, 255, 0.45);
+            box-shadow: 0 12px 32px rgba(15, 23, 42, 0.06);
+        }
+        .gradient-text {
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6, #ec4899);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .soft-divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.22), transparent);
+        }
+        .glow-btn {
+            position: relative;
+            overflow: hidden;
+        }
+        .glow-btn::before {
+            content: "";
+            position: absolute;
+            inset: -2px;
+            border-radius: inherit;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6, #ec4899);
+            opacity: 0;
+            transition: opacity 0.25s ease;
+            z-index: -1;
+        }
+        .glow-btn:hover::before {
+            opacity: 0.35;
+        }
+        .clock-pill {
+            background: rgba(59, 130, 246, 0.08);
+            border: 1px solid rgba(59, 130, 246, 0.18);
+        }
+        @keyframes fadeInUp {
+            from {opacity:0;transform:translateY(10px);}
+            to {opacity:1;transform:translateY(0);}
+        }
+        #wishText {
+            animation: fadeInUp 0.45s cubic-bezier(0.2, 0, 0.2, 1.2);
+        }
+        .text-img-row {
+            display: grid;
+            grid-template-columns: 1fr 240px;
+            gap: 1.5rem;
+            align-items: start;
+        }
+        @media (max-width:640px) {
+            .text-img-row {
+                grid-template-columns: 1fr;
+            }
+        }
+        .text-img-row img {
+            width: 100%;
+            border-radius: 12px;
+            object-fit: cover;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+        }
+        .back-home-btn{
+            position:fixed;
+            top:72px;
+            left:16px;
+            z-index:50;
+            backdrop-filter:blur(14px);
+            background:rgba(255,255,255,0.75);
+            border:1px solid rgba(226,232,240,0.9);
+            padding:8px 14px;
+            border-radius:999px;
+            font-size:14px;
+            color:#3b82f6;
+            box-shadow:0 6px 18px rgba(59,130,246,0.12);
+            transition:0.3s cubic-bezier(0.2,0,0.2,1.4);
+        }
+        .back-home-btn:hover{
+            transform:scale(1.06);
+            box-shadow:0 10px 24px rgba(59,130,246,0.18);
+            background:rgba(241,245,255,0.9);
+        }
+        .history-submenu{
+            overflow:hidden;
+            max-height:0;
+            transition:max-height 0.45s ease;
+        }
+        .history-submenu.open{
+            max-height:800px;
+        }
+    </style>
+</head>
+<body class="text-slate-800">
+<a href="index.html" class="back-home-btn glow-btn"><i class="fa fa-arrow-left"></i> 返回主页</a>
+<header class="top-header w-full sticky top-0 z-30">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
+        <h1 class="text-xl md:text-2xl font-bold gradient-text">🎮 Leaf生电{}服务器介绍</h1>
+        <div class="clock-pill text-sm md:text-base font-mono text-slate-600 flex items-center gap-2 px-4 py-2 rounded-full">
+            <i class="fa fa-clock-o text-main"></i>
+            <span id="clock">--:--:--</span>
+        </div>
+    </div>
+</header>
+<div class="wish-panel fixed top-20 right-4 z-40 rounded-2xl p-4 w-56">
+    <div id="wishText" class="text-sm font-medium gradient-text"></div>
+</div>
+<div class="max-w-7xl mx-auto flex flex-col md:flex-row min-h-screen pt-6 px-2 gap-5">
+    <div class="side-bar w-full md:w-64 rounded-2xl p-4 h-fit sticky top-20">
+        <h2 class="font-bold text-lg mb-4 text-slate-800 flex items-center gap-2">
+            <i class="fa fa-server text-main"></i> 服务器菜单
+        </h2>
+        <div class="soft-divider mb-4"></div>
+        <div class="flex flex-col gap-3">
+            <div class="side-item active rounded-xl px-4 py-3 cursor-pointer" data-target="serverIntro">
+                <i class="fa fa-info-circle mr-2"></i> 服务器介绍
+            </div>
+            <div class="side-item rounded-xl px-4 py-3 cursor-pointer" data-target="pluginCmd">
+                <i class="fa fa-terminal mr-2"></i> 服务器插件指令
+            </div>
+            <div class="side-item rounded-xl px-4 py-3 cursor-pointer" data-target="specialNote">
+                <i class="fa fa-exclamation-triangle mr-2"></i> 服务器特别说明
+            </div>
+            <div class="side-item rounded-xl px-4 py-3 cursor-pointer" id="toggleHistoryMenu">
+                <i class="fa fa-bookmark mr-2 text-rose-500"></i> <strong>重要：服务器历史</strong>
+                <i class="fa fa-angle-down float-right transition-transform duration-300" id="historyArrow"></i>
+            </div>
+            <div class="history-submenu" id="historySub"></div>
+        </div>
+    </div>
+    <div class="flex-1 space-y-5">
+        <div class="content-box article-card p-6 md:p-8 rounded-2xl show" id="serverIntro">
+            <h2 class="text-2xl md:text-3xl font-bold gradient-text">🎮 服务器介绍</h2>
+            <div class="mt-6 space-y-4 text-slate-600 text-lg leading-relaxed">
+                <p>这是一个由个人自主搭建的Minecraft原版服务器，偏向生电、生存、建筑、玩家社区，没有氪金内容</p>
+                <p>服务器主打休闲生电、自由混乱、支持玩家合作建造、资源探索、社区交互。</p>
+                <ul class="list-disc pl-6 space-y-2 mt-3">
+                    <li>服务器核心：<strong>Leaves · 1.21.11 fabric</strong></li>
+                    <li>游戏版本：<strong>Java1.21.11</strong></li>
+                    <li>游戏模式：生电、生存、养老、建筑、交友、竞争</li>
+                    <li>服务器类型：Java版生电服务器</li>
+                    <li>核心理念：自由无限制</li>
+                </ul>
+                <div class="p-4 rounded-xl bg-blue-50 border border-blue-100 mt-6">
+                    <p class="text-main font-semibold">💡提示：下方左侧菜单可以查看插件指令、注意事项以及服务器发展史。</p>
+                </div>
+            </div>
+        </div>
+        <div class="content-box article-card p-6 md:p-8 rounded-2xl" id="pluginCmd">
+            <h2 class="text-2xl md:text-3xl font-bold gradient-text">⌨️ 服务器插件指令</h2>
+            <div class="mt-6 space-y-3 text-slate-600 text-lg">
+                <p><code class="bg-slate-100 px-2 py-1 rounded">/spawn</code> — 返回服务器出生点</p>
+                <p><code class="bg-slate-100 px-2 py-1 rounded">/home</code> — 返回个人家点</p>
+                <p><code class="bg-slate-100 px-2 py-1 rounded">/sethome</code> — 设置家的位置</p>
+                <p><code class="bg-slate-100 px-2 py-1 rounded">/tpaccept</code> — 接受玩家传送请求</p>
+                <p><code class="bg-slate-100 px-2 py-1 rounded">/tpa 玩家名</code> — 请求传送到其他玩家</p>
+                <p><code class="bg-slate-100 px-2 py-1 rounded">/back</code> — 返回上一次死亡位置</p>
+                <p><code class="bg-slate-100 px-2 py-1 rounded">/shop</code> — 打开服务器商店</p>
+                <div class="soft-divider my-5"></div>
+                <p class="text-slate-500">在这里继续添加更多服务器指令。</p>
+            </div>
+        </div>
+        <div class="content-box article-card p-6 md:p-8 rounded-2xl" id="specialNote">
+            <h2 class="text-2xl md:text-3xl font-bold gradient-text">⚠️ 服务器特别说明</h2>
+            <div class="mt-6 space-y-4 text-slate-600 text-lg">
+                <div class="p-4 bg-amber-50 border border-amber-200 rounded-xl">
+                    <h4 class="font-bold text-amber-700 mb-2">游玩规则</h4>
+                    <ul class="list-disc pl-5 space-y-1">
+                        <li>禁止恶意破坏他人建筑、偷取玩家物资</li>
+                        <li>禁止使用作弊模组、外挂</li>
+                        <li>友好交流，禁止辱骂、引战</li>
+                        <li>服务器为个人爱好者搭建，可能不定期维护重启</li>
+                    </ul>
+                </div>
+                <p>服务器属于个人兴趣项目，没有盈利性质，遇到BUG可以向管理员反馈。</p>
+            </div>
+        </div>
+        <div class="content-box article-card p-6 md:p-8 rounded-2xl" id="serverHistoryWrap">
+            <h2 class="text-2xl md:text-3xl font-bold gradient-text">📜 服务器发展史</h2>
+            <p class="text-slate-500 mt-2">请在左侧菜单选择日期查看对应历史事件</p>
+            <div class="soft-divider my-5"></div>
+            <div id="historyRenderArea"></div>
+        </div>
+    </div>
+</div>
+<footer class="mt-12 py-8 text-center text-slate-400 text-sm">
+    高中生个人博客 · Minecraft服务器介绍页面
+</footer>
+<script>
+const historyData = [
+    {
+        date:"2025‑11‑28",
+        title:"2025‑11‑28｜服务器正式开服 · 梦的开始",
+        content:`
+<p>今日服务器正式开启，最初版本配置简单，只有基础生存插件。仅有两个人玩，开始开荒</p>
+<p class="mt-2">开服初期性能有限，后续会慢慢迭代更新</p>
+        `,
+        imgSrc:"https://img.remit.ee/api/file/BQACAgUAAyEGAASHRsPbAAEZUbhqgr9t2sh-1vYVS4pFjyvB5ZVmJgAC3igAAnYcGVQoUJOuXVXCZj0E.jpg"
+    },
+    {
+        date:"2025‑03‑05",
+        title:"2025‑03‑05｜服务器大版本更新",
+        content:`
+<p>服务器进行大版本升级，更换核心服务端，增加大量实用插件，修复大量卡顿BUG。</p>
+<p class="mt-2">开放商店、家点传送、死亡回档等功能，玩家游玩体验大幅提升。</p>
+        `,
+        imgSrc:"https://picsum.photos/id/1025/400/300"
+    },
+    {
+        date:"2025‑04‑18",
+        title:"2025‑04‑18｜大型社区建筑完工",
+        content:`
+<p>由多名玩家联合完成大型公共主城建筑，作为全服务器玩家的公共活动地点。</p>
+<p class="mt-2">大量玩家参与建造，成为服务器标志性地标。</p>
+        `,
+        imgSrc:"https://picsum.photos/id/1039/400/300"
+    },
+    {
+        date:"2025‑06‑01",
+        title:"2025‑06‑01｜服务器插件整体重构",
+        content:`
+<p>对全部插件进行整理重构，移除老旧废弃插件，优化权限系统，完善反破坏保护。</p>
+<p class="mt-2">优化服务器安全，更好保护玩家建筑与物资。</p>
+        `,
+        imgSrc:"https://picsum.photos/id/1068/400/300"
+    }
+];
+
+function renderHistorySideMenu(){
+    const subWrap = document.getElementById("historySub");
+    subWrap.innerHTML = "";
+    historyData.forEach(item=>{
+        const div = document.createElement("div");
+        div.className = "side-item sub-item rounded-xl px-4 py-2.5 cursor-pointer text-sm";
+        div.dataset.historyDate = item.date;
+        div.innerHTML = `📅 ${item.date}`;
+        subWrap.appendChild(div);
+    })
+}
+function renderHistoryContentArea(){
+    const area = document.getElementById("historyRenderArea");
+    area.innerHTML = "";
+    historyData.forEach(item=>{
+        const wrapper = document.createElement("div");
+        wrapper.className = "history-item-box hidden";
+        wrapper.dataset.date = item.date;
+        let imgHtml = "";
+        if(item.imgSrc && item.imgSrc!==""){
+            imgHtml = `<img src="${item.imgSrc}" alt="${item.title}">`;
+        }
+        wrapper.innerHTML = `
+<h3 class="text-xl font-semibold text-slate-800">📅 ${item.title}</h3>
+<div class="text-img-row mt-4">
+    <div class="text-slate-600 leading-relaxed text-lg">
+        ${item.content}
+    </div>
+    ${imgHtml}
+</div>
+        `;
+        area.appendChild(wrapper);
+    })
+}
+renderHistorySideMenu();
+renderHistoryContentArea();
+
+function updateClock() {
+    const now = new Date();
+    const str = now.toLocaleString('zh-CN', {year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit'});
+    document.getElementById('clock').innerText = str;
+}
+updateClock();
+setInterval(updateClock,1000);
+
+const wishList = [
+    "愿你今日万事顺意，学习进步✨",
+    "保持热爱，奔赴下一场山海",
+    "今天也要好好努力，闪闪发光",
+    "烦恼消散，好运常伴左右",
+    "平安喜乐，所得皆所愿",
+    "少年自有玫瑰与星光",
+    "放松片刻，继续向前奔跑"
+];
+function getRandomWish() {
+    return wishList[Math.floor(Math.random() * wishList.length)];
+}
+document.getElementById('wishText').innerText = getRandomWish();
+
+const sideItems = document.querySelectorAll('.side-item:not(.sub-item)');
+const contentBoxes = document.querySelectorAll('.content-box');
+sideItems.forEach(item=>{
+    if(item.id==="toggleHistoryMenu") return;
+    item.onclick = function(){
+        const targetId = this.dataset.target;
+        sideItems.forEach(i=>i.classList.remove("active"));
+        this.classList.add("active");
+        contentBoxes.forEach(b=>b.classList.remove("show"));
+        document.getElementById(targetId).classList.add("show");
+    }
+})
+
+const toggleBtn = document.getElementById('toggleHistoryMenu');
+const subMenu = document.getElementById('historySub');
+const arrow = document.getElementById('historyArrow');
+toggleBtn.onclick = function(){
+    subMenu.classList.toggle("open");
+    arrow.style.transform = subMenu.classList.contains("open") ? "rotate(180deg)" : "rotate(0deg)";
+}
+
+document.querySelector("#historySub").addEventListener("click",(e)=>{
+    const target = e.target.closest(".sub-item");
+    if(!target) return;
+    const selDate = target.dataset.historyDate;
+    sideItems.forEach(i=>i.classList.remove("active"));
+    contentBoxes.forEach(b=>b.classList.remove("show"));
+    document.getElementById("serverHistoryWrap").classList.add("show");
+    document.querySelectorAll(".sub-item").forEach(d=>d.classList.remove("active"));
+    target.classList.add("active");
+    document.querySelectorAll(".history-item-box").forEach(hb=>{
+        if(hb.dataset.date === selDate){
+            hb.classList.remove("hidden");
+        }else{
+            hb.classList.add("hidden");
+        }
+    })
+})
+</script>
+</body>
+</html>

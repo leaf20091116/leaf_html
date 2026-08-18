@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>回忆纸质相册</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0">
+<script>
+tailwind.config = {
+  theme:{
+    extend:{
+      main:"#3b82f6",
+      retroBg:"#e6dfd2",
+      retroPaper:"#fff8ec",
+      retroText:"#5c4332",
+      retroBorder:"#b89c7c"
+    },
+    fontFamily:{
+      sans:['Inter','system-ui','-apple-system','sans-serif'],
+      serif:['Georgia','Noto Serif SC','serif']
+    }
+  }
+}
+</script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{min-height:100vh;transition:background 0.45s ease,color 0.45s ease;font-family:system-ui,-apple-system,sans-serif}
+
+/* 两套风格 */
+.style-modern{background:#f7f9fc;color:#1f2937}
+.style-retro{background:#e6dfd2;background-image:radial(#d9cebe 0.7px, transparent 0.7px);background-size:18px 18px;color:#5c4332}
+
+/* 书本相册 */
+.album-book{position:relative;perspective:1600px;margin-top:2rem}
+.album-wrap{overflow:hidden;min-h-[720px]}
+
+/* 整页容器 */
+.page-block{position:absolute;width:100%;display:grid;grid-template-columns:1fr 1fr;gap:2rem;transition:transform 0.55s cubic-bezier(0.2,0,0.2,1.3),opacity 0.5s}
+.page-hide-left{transform:translateX(-130%);opacity:0}
+.page-hide-right{transform:translateX(130%);opacity:0}
+.page-show{transform:translateX(0);opacity:1}
+
+/* 纸质版面 */
+.paper-page{padding:2rem;border-radius:16px;box-shadow:0 8px 30px rgba(0,0,0.06)}
+.style-modern .paper-page{background:#ffffff;border:1px solid #e2e8f0}
+.style-retro .paper-page{background:#fff8ec;border:3px solid #b89c7c;box-shadow:0 12px 40px rgba(110,80,40,0.12)}
+
+/* 照片卡片 窄边框突出图片 */
+.photo-card{transition:all 0.32s cubic-bezier(0.2,0,0.2,1.3);margin-bottom:1.2rem}
+.photo-card:hover{transform:translateY(-4px);box-shadow:0 12px 24px rgba(0,0,0.12)}
+.style-modern .photo-card{border-radius:12px;overflow:hidden;background:#fff;border:1px solid #eee}
+.style-retro .photo-card{border-radius:2px;background:#fffdf6;border:4px solid #fffdf6;box-shadow:0 6px 18px rgba(70,45,20,0.1)}
+.photo-card img{display:block;width:100%;height:260px;object-cover}
+
+/* 照片文字 */
+.photo-card p{margin-top:0.9rem;line-height:1.75;font-size:0.95rem}
+.style-modern .photo-card p{color:#4b5563}
+.style-retro .photo-card p{color:#6b4f3e}
+
+/* 标题字体优化 */
+h3{font-weight:600;letter-spacing:0.5px}
+.style-modern h3{color:#111827}
+.style-retro h3{color:#4a3528}
+
+/* 按钮 */
+.btn{transition:all 0.25s cubic-bezier(0.2,0,0.2,1.4);border:none;font-weight:500}
+.btn:active{transform:scale(0.96)}
+#themeBtn{background:linear-gradient(135deg,#3b82f6,#8b5cf6);color:#fff;padding:0.5rem 1rem;border-radius:999px;font-size:0.9rem}
+#themeBtn:hover{filter:brightness(1.05)}
+.page-controls button{background:#f3f4f6;color:#1f2937;border-radius:999px;padding:0.45rem 1rem;font-size:0.9rem}
+.page-controls button:hover{background:#e5e7eb}
+.page-controls input{width:3.5rem;text-align:center;border:1px solid #d1d5db;border-radius:0.5rem;padding:0.4rem;font-size:0.95rem}
+
+/* 右上角时钟 */
+.clock-box{position:fixed;top:16px;right:16px;z-50;padding:8px 14px;border-radius:99px;background:#fff;box-shadow:0 3px 10px rgba(0,0,0.08);display:flex;gap:8px;align-items:center;font-family:monospace;font-size:14px}
+.style-retro .clock-box{background:#fff8ec;border:1px solid #b89c7c}
+
+.split-line{height:1px;width:100%;margin:1.2rem 0}
+.style-modern .split-line{background:#e2e8f0}
+.style-retro .split-line{background:#b89c7c}
+.page-controls{display:flex;align-items:center;gap:0.9rem;flex-wrap:wrap}
+</style>
+</head>
+<body class="style-modern">
+
+<div class="clock-box">
+<i class="fa fa-clock-o text-main"></i>
+<span id="clockText"></span>
+</div>
+
+<div class="max-w-6xl mx-auto px-4 py-12">
+  <div class="flex flex-wrap justify-between items-center mb-10 gap-4">
+    <h1 class="text-3xl font-bold">📖 纸质回忆相册</h1>
+    <div class="flex gap-3 items-center">
+      <button id="themeBtn" class="btn">
+        <i class="fa fa-paint-brush mr-1"></i>
+        <span id="themeText">复古胶片</span>
+      </button>
+      <a href="index.html" class="btn px-4 py-2 rounded-lg bg-slate-400 text-white inline-flex items-center gap-1">
+        <i class="fa fa-arrow-left"></i> 返回主页
+      </a>
+    </div>
+    <div class="page-controls mt-4">
+      <button id="prevBtn" class="btn">
+        <i class="fa fa-chevron-left mr-1"></i> 上一页
+      </button>
+      <span>当前 <input id="pageInput" value="1"> / <span id="totalPage">3</span></span>
+      <button id="jumpBtn" class="btn bg-main text-white">跳转</button>
+      <button id="nextBtn" class="btn">
+        下一页 <i class="fa fa-chevron-right ml-1"></i>
+      </button>
+    </div>
+  </div>
+
+  <div class="album-book">
+    <div class="album-wrap">
+      <!-- 第1页 -->
+      <div class="page-block page-show" data-page="1">
+        <div class="paper-page" data-side="left">
+          <h3>2025.12.12 · 姥姥</h3>
+          <div class="split-line"></div>
+          <div class="photo-card" data-id="1_left_01">
+            <img src="https://img.remit.ee/api/file/BQACAgUAAyEGAASHRsPbAAEZSIRqgefCx0z3nFzoyqylA47zQ9Dk6QACrycAAnYcEVQeR68oufkP1T0E.jpg"
+            <p>"午后阳光"</p>
+          </div>
+          <div class="photo-card" data-id="1_left_02">
+            <img src="https://picsum.photos/id/1022/600/400">
+            <p>山路旁的小野花，不起眼却很治愈。</p>
+          </div>
+        </div>
+        <div class="paper-page" data-side="right">
+          <h3>2026.07.20 · 落日码头</h3>
+          <div class="split-line"></div>
+          <div class="photo-card" data-id="1_right_01">
+            <img src="https://picsum.photos/id/1039/600/400">
+            <p>落日把海面染成橘红色，海浪慢慢拍打岸边，站在这里发呆半小时，什么烦恼都暂时放下了。</p>
+          </div>
+          <div class="photo-card" data-id="1_right_02">
+            <img src="https://picsum.photos/id/1022/600">
+            <p>何尝不是一种失去呢。</p>
+          </div>
+        </div>
+      </div>
+      <!-- 第2页 -->
+      <div class="page-block page-hide-right" data-page="2">
+        <div class="paper-page" data-side="left">
+          <h3>2026.07.26 · 林间小路</h3>
+          <div class="split-line"></div>
+          <div class="photo-card" data-id="2_left_01">
+            <img src="https://picsum.photos/id/1043/600/400">
+            <p>树荫层层叠叠，阳光透过树叶碎成光斑，走路的时候脚步都不自觉放轻。</p>
+          </div>
+        </div>
+        <div class="paper-page" data-side="right">
+          <h3>2026.07.28 · 郊外花海</h3>
+          <div class="split-line"></div>
+          <div class="photo-card" data-id="2_right_01">
+            <img src="https://picsum.photos/id/1048/600">
+            <p>大片小花铺在田野里，风一吹整片花海摇晃，留住温柔夏日。</p>
+          </div>
+        </div>
+      </div>
+      <!-- 第3页 -->
+      <div class="page-block page-hide-right" data-page="3">
+        <div class="paper-page" data-side="left">
+          <h3>2026.08.03 · 晴空云海</h3>
+          <div class="split-line"></div>
+          <div class="photo-card" data-id="3_left_01">
+            <img src="https://picsum.photos/id/1060/600/400">
+            <p>登上高处看见整片云海，云朵层层堆叠，天空干净通透。</p>
+          </div>
+        </div>
+        <div class="paper-page" data-side="right">
+          <h3>2026.08.05 · 城市黄昏</h3>
+          <div class="split-line"></div>
+          <div class="photo-card" data-id="3_right_01">
+            <img src="https://picsum.photos/id/1071/600/400">
+            <p>城市灯光慢慢亮起，黄昏淡紫色天空，平凡日子也有好看瞬间。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function updateClock(){
+  const now = new Date();
+  const timeStr = now.toLocaleString("zh-CN",{
+    year:"numeric",month:"2-digit",day:"2-digit",
+    hour:"2-digit",minute:"2-digit",second:"2-digit"
+  })
+  document.getElementById("clockText").innerText = timeStr;
+}
+updateClock();
+setInterval(updateClock);
+
+// 单按钮切换风格
+const themeBtn = document.getElementById("themeBtn");
+const themeText = document.getElementById("themeText");
+themeBtn.onclick = ()=>{
+  const body = document.body;
+  if(body.classList.contains("style-modern")){
+    body.classList.remove("style-modern");
+    body.classList.add("style-retro");
+    themeText.innerText = "现代样式";
+  }else{
+    body.classList.remove("style-retro");
+    body.classList.add("style-modern");
+    themeText.innerText = "复古胶片";
+  }
+}
+
+// 分页逻辑
+let currentPage = 1;
+const allPages = document.querySelectorAll(".page-block");
+const totalPageNum = allPages.length;
+document.getElementById("totalPage").innerText = totalPageNum;
+const pageInput = document.getElementById("pageInput");
+const prevBtn = document.getElementById("prevBtn");
+const nextBtn = document.getElementById("nextBtn");
+const jumpBtn = document.getElementById("jumpBtn");
+
+function renderPage(target){
+  if(target < 1 || target > totalPageNum) return;
+  allPages.forEach(block=>{
+    const pageNum = Number(block.dataset.page);
+    block.classList.remove("page-show","page-hide-left","page-hide-right");
+    if(pageNum === target){
+      block.classList.add("page-show");
+    }else if(pageNum < target){
+      block.classList.add("page-hide-left");
+    }else{
+      block.classList.add("page-hide-right");
+    }
+  })
+  currentPage = target;
+  pageInput.value = currentPage;
+}
+prevBtn.onclick = ()=> renderPage(currentPage - 1);
+nextBtn.onclick = ()=> renderPage(currentPage + 1);
+jumpBtn.onclick = ()=>{
+  const num = Number(pageInput.value);
+  if(!isNaN(num)) renderPage(num);
+}
+</script>
+</body>
+</html>

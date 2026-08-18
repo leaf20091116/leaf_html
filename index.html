@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>高中生个人娱乐小博客</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        main: '#3b82f6',
+                        mainSoft: '#60a5fa',
+                        sideBg: '#f8fafc',
+                        cardBg: '#ffffff',
+                        textPrimary: '#0f172a',
+                        textSecondary: '#64748b',
+                        hoverBlue: '#f1f5ff',
+                        activeBlue: '#2563eb'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        html {
+            scroll-behavior: smooth;
+        }
+        body {
+            background:
+                radial-gradient(circle at 12% 12%, rgba(59, 130, 0.45), transparent 28%),
+                radial-gradient(circle at 88% 8%, rgba(168, 85, 247, 0.35), transparent 32%),
+                linear-gradient(135deg, #ffffff 0%, #f8fafc 45%, #f0f4ff 100%);
+            min-height: 100vh;
+            color: #0f172a;
+            font-family: 'system-ui', -apple-system, sans-serif;
+        }
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, #3b82f6, #8b5cf6);
+            border-radius: 999px;
+        }
+        .top-header {
+            backdrop-filter: blur(22px);
+            -webkit-backdrop-filter: blur(22px);
+            background: rgba(255, 255, 255, 0.72);
+            border-bottom: 1px solid rgba(226, 232, 240, 0.88);
+        }
+        .side-bar {
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            background: rgba(248, 252, 252, 0.82);
+            border: 1px solid rgba(226, 232, 240, 0.9);
+        }
+        .side-item {
+            transition:
+                background 0.4s cubic-bezier(0.2, 0, 0.2, 1.4),
+                color 0.4s cubic-bezier(0.2, 0, 0.2, 1.4),
+                transform 0.4s cubic-bezier(0.2, 0, 0.2, 1.4),
+                box-shadow 0.4s cubic-bezier(0.2, 0, 0.2, 1.4);
+            transform: scale(1) translateZ(0);
+            will-change: transform, background, box-shadow;
+        }
+        .side-item:hover {
+            background: rgba(59, 130, 246, 0.08);
+            transform: scale(1.04) translateX(4px);
+            box-shadow: 0 8px 20px rgba(59, 130, 246, 0.16);
+        }
+        .side-item.active {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            color: white;
+            transform: scale(1.06) translateX(6px);
+            box-shadow: 0 10px 30px rgba(37, 99, 235, 0.22);
+        }
+        .category-tab {
+            transition:
+                background 0.35s cubic-bezier(0.2, 0, 0.2, 1.3),
+                color 0.35s cubic-bezier(0.2, 0, 0.2, 1.3),
+                transform 0.35s cubic-bezier(0.2, 0, 0.2, 1.3),
+                box-shadow 0.35s cubic-bezier(0.2, 0, 0.2, 1.3);
+            transform: scale(1) translateZ(0);
+            will-change: transform, background, box-shadow;
+        }
+        .category-tab:hover:not(.active) {
+            background: rgba(59, 130, 246, 0.06);
+            transform: scale(1.05) translateY(-2px);
+        }
+        .category-tab.active {
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            color: white;
+            transform: scale(1.08) translateY(-3px);
+            box-shadow: 0 8px 24px rgba(59, 130, 246, 0.18);
+        }
+        .content-box {
+            display: none;
+            opacity: 0;
+            transform: translateY(16px) scale(0.98);
+            transition: opacity 0.45s cubic-bezier(0.2,0,0.2,1.2), transform 0.45s cubic-bezier(0.2,0,0.2,1.2);
+        }
+        .content-box.show {
+            display: block;
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+        .article-card {
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            background: rgba(255, 255, 255, 0.78);
+            border: 1px solid rgba(226, 232, 240, 0.86);
+            box-shadow: 0 18px 45px rgba(15, 23, 42, 0.08);
+        }
+        /* ========== 右上角祝福语面板：增强毛玻璃+高透明高级感 ========== */
+        .wish-panel {
+            backdrop-filter: blur(28px);
+            -webkit-backdrop-filter: blur(28px);
+            background: rgba(255, 255, 255, 0.32);
+            border: 1px solid rgba(255, 255, 255, 0.45);
+            box-shadow: 0 12px 32px rgba(15, 23, 42, 0.06);
+        }
+        .gallery-image {
+            transition:
+                transform 0.5s cubic-bezier(0.2,0,0.2,1.4),
+                filter 0.5s cubic-bezier(0.2,0,0.2,1.4);
+            filter: saturate(0.92) contrast(0.96);
+        }
+        .gallery-item:hover .gallery-image {
+            transform: scale(1.12) translateY(-6px);
+            filter: saturate(1.08) contrast(1.02);
+        }
+        .gradient-text {
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6, #ec4899);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .soft-divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.22), transparent);
+        }
+        .glow-btn {
+            position: relative;
+            overflow: hidden;
+        }
+        .glow-btn::before {
+            content: "";
+            position: absolute;
+            inset: -2px;
+            border-radius: inherit;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6, #ec4899);
+            opacity: 0;
+            transition: opacity 0.25s ease;
+            z-index: -1;
+        }
+        .glow-btn:hover::before {
+            opacity: 0.35;
+        }
+        .clock-pill {
+            background: rgba(59, 130, 246, 0.08);
+            border: 1px solid rgba(59, 130, 246, 0.18);
+        }
+        @keyframes fadeInUp {
+            from {opacity:0;transform:translateY(10px);}
+            to {opacity:1;transform:translateY(0);}
+        }
+        #wishText {
+            animation: fadeInUp 0.45s cubic-bezier(0.2, 0, 0.2, 1.2);
+        }
+        .text-img-row {
+            display: grid;
+            grid-template-columns: 1fr 240px;
+            gap: 1.5rem;
+            align-items: start;
+        }
+        @media (max-width:640px) {
+            .text-img-row {
+                grid-template-columns: 1fr;
+            }
+        }
+        .text-img-row img {
+            width: 100%;
+            border-radius: 12px;
+            object-fit: cover;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+        }
+    </style>
+</head>
+<body class="text-slate-800">
+<header class="top-header w-full sticky top-0 z-30">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
+        <h1 class="text-xl md:text-2xl font-bold gradient-text">✨ 我的个人娱乐博客</h1>
+        <div class="clock-pill text-sm md:text-base font-mono text-slate-600 flex items-center gap-2 px-4 py-2 rounded-full">
+            <i class="fa fa-clock-o text-main"></i>
+            <span id="clock">--:--:--</span>
+        </div>
+    </div>
+</header>
+<div class="wish-panel fixed top-20 right-4 z-40 rounded-2xl p-4 w-56">
+    <div id="wishText" class="text-sm font-medium gradient-text"></div>
+</div>
+<div class="max-w-7xl mx-auto flex flex-col md:flex-row min-h-screen pt-6 px-2 gap-5">
+    <div class="side-bar w-full md:w-64 rounded-2xl p-4 h-fit sticky top-20">
+        <h2 class="font-bold text-lg mb-4 text-slate-800 flex items-center gap-2">
+            <i class="fa fa-folder-open text-main"></i> 内容菜单
+        </h2>
+        <div class="flex flex-wrap gap-2 mb-4">
+            <div class="category-tab active px-3 py-1.5 rounded-full text-sm font-medium" data-group="homeGroup">首页综合</div>
+            <div class="category-tab px-3 py-1.5 rounded-full text-sm font-medium" data-group="gameGroup">游戏娱乐</div>
+            <div class="category-tab px-3 py-1.5 rounded-full text-sm font-medium" data-group="textGroup">文字治愈</div>
+            <div class="category-tab px-3 py-1.5 rounded-full text-sm font-medium glow-btn" onclick="location.href='diary.html'">☞日记专区</div>
+            <div class="category-tab px-3 py-1.5 rounded-full text-sm font-medium glow-btn" onclick="location.href='album.html'">☞回忆相册</div>
+            <div class="category-tab px-3 py-1.5 rounded-full text-sm font-medium glow-btn" onclick="location.href='mc_server.html'">☞Minecraft服务器</div>
+        </div>
+        <div class="soft-divider mb-4"></div>
+        <div class="group-block flex flex-col gap-3" id="homeGroup">
+            <div class="side-item active rounded-xl px-4 py-3 cursor-pointer" data-target="home">
+                <i class="fa fa-home mr-2"></i> 首页主页
+            </div>
+            <div class="side-item rounded-xl px-4 py-3 cursor-pointer" data-target="article">
+                <i class="fa fa-file-text-o mr-2"></i> 吴宇阳的绝美文章
+            </div>
+            <div class="side-item rounded-xl px-4 py-3 cursor-pointer" data-target="sentence">
+                <i class="fa fa-quote-right mr-2"></i> 今日佳句
+            </div>
+        </div>
+        <div class="group-block hidden flex flex-col gap-3" id="gameGroup">
+            <div class="side-item rounded-xl px-4 py-3 cursor-pointer" data-target="mc">
+                <i class="fa fa-cube mr-2"></i> 我的世界冷知识
+            </div>
+        </div>
+        <div class="group-block hidden flex flex-col gap-3" id="textGroup">
+            <div class="side-item rounded-xl px-4 py-3 cursor-pointer" data-target="study">
+                <i class="fa fa-book mr-2"></i> 学习励志语录
+            </div>
+            <div class="side-item rounded-xl px-4 py-3 cursor-pointer" data-target="anime">
+                <i class="fa fa-film mr-2"></i> 动漫治愈短句
+            </div>
+            <div class="side-item rounded-xl px-4 py-3 cursor-pointer" data-target="relax">
+                <i class="fa fa-leaf mr-2"></i> 解压温柔文案
+            </div>
+            <div class="side-item rounded-xl px-4 py-3 cursor-pointer" data-target="life">
+                <i class="fa fa-coffee mr-2"></i> 生活随笔记录
+            </div>
+        </div>
+    </div>
+    <div class="flex-1 space-y-5">
+        <div class="content-box article-card p-6 md:p-8 rounded-2xl show" id="home">
+            <h2 class="text-2xl md:text-3xl font-bold gradient-text">👋 欢迎来到我的小世界</h2>
+            <p class="leading-relaxed text-slate-600 text-lg mt-4">
+                这里是一名高中生的个人娱乐博客。<br>
+                没有复杂功能，只为记录生活、收藏温柔、存放热爱。<br>
+                闲暇时看看文章、短句、冷知识、图片，给自己放松的片刻。
+            </p>
+            <div class="mt-8 p-5 rounded-xl bg-blue-50 border border-blue-100">
+                <p class="text-main font-semibold mb-3 text-lg">💡 本站功能</p>
+                <ul class="space-y-2 text-slate-600">
+                    <li class="flex items-start gap-2"><i class="fa fa-check-circle text-main mt-1"></i><span>精美图片画廊展示</span></li>
+                    <li class="flex items-start gap-2"><i class="fa fa-check-circle text-main mt-1"></i><span>绝美治愈文章阅读</span></li>
+                    <li class="flex items-start gap-2"><i class="fa fa-check-circle text-main mt-1"></i><span>每日佳句更新</span></li>
+                    <li class="flex items-start gap-2"><i class="fa fa-check-circle text-main mt-1"></i><span>我的世界趣味冷知识</span></li>
+                    <li class="flex items-start gap-2"><i class="fa fa-check-circle text-main mt-1"></i><span>励志语录、动漫短句、解压文案</span></li>
+                    <li class="flex items-start gap-2"><i class="fa fa-check-circle text-main mt-1"></i><span>生活随笔记录</span></li>
+                    <li class="flex items-start gap-2"><i class="fa fa-check-circle text-main mt-1"></i><span>个人生活随笔记录</span></li>
+                    <li class="flex items-start gap-2"><i class="fa fa-check-circle text-main mt-1"></i><span>独立日记本页面记录日常</span></li>
+                    <li class="flex items-start gap-2"><i class="fa fa-check-circle text-main mt-1"></i><span>双风格回忆相册分页浏览</span></li>
+                    <li class="flex items-start gap-2"><i class="fa fa-check-circle text-main mt-1"></i><span>Minecraft服务器介绍页面</span></li>
+                </ul>
+            </div>
+        </div>
+        <div class="content-box article-card p-6 md:p-8 rounded-2xl" id="article">
+            <h2 class="text-2xl md:text-3xl font-bold gradient-text">✍️ 吴宇阳的绝美文章</h2>
+            <div class="mt-6 mb-8">
+                <h3 class="text-xl md:text-2xl font-semibold mb-3 text-slate-800">世人只知豪情在天，不知嘉豪不败人间</h3>
+                <p class="text-slate-600 leading-relaxed text-lg">胜你无需第二剑，豪你无需第二遍。</p>
+                <p class="text-slate-500 italic mt-2">"To defeat you, I don't need two swords; to please you, I don't need to do it twice."</p>
+            </div>
+            <div class="soft-divider my-6"></div>
+            <div class="mb-8">
+                <h3 class="text-xl md:text-2xl font-semibold mb-3 text-slate-800">豪到你了吗，小妹妹</h3>
+                <p class="text-slate-600 leading-relaxed text-lg mb-4">你们都只是跟风玩梗，只有我是亲身经历、实打实被退学。当初一时冲动动手，把体育老师打进医院，起因不过是他碰了我手腕上女朋友送的小皮筋，现在回想依旧五味杂陈。</p>
+                <p class="text-slate-600 leading-relaxed text-lg mb-4">从前失恋那段日子，我疯到旁人难以想象。暴雨倾盆的夜晚，我赤裸着腹肌在球场连续打了六个小时篮球，任由雨水冲刷所有烦闷。</p>
+                <p class="text-slate-600 leading-relaxed text-lg mb-4">班里同学传言下雨天操场能看见嘉豪，有人专程绕操场找我好几圈，却始终扑空。还有一回上课，我拿电子黑板看股票，不小心弄坏设备，最后还是自己敲几段代码把故障修好。</p>
+                <p class="text-slate-600 leading-relaxed text-lg">平日里我在家静心研习琴棋书画，闲时研究股票基金，本就很少接触网络上乱七八糟的段子，旁人提起嘉豪相关烂梗，我大多一头雾水。航天大业尚且等待后辈奔赴，不该沉溺无意义玩梗之中。</p>
+            </div>
+            <div class="soft-divider my-6"></div>
+            <div class="mb-8">
+                <div class="text-img-row">
+                    <div>
+                        <h3 class="text-xl md:text-2xl font-semibold mb-3 text-slate-800">冷知识威龙是龙，龙会飞很正常</h3>
+                        <p class="text-slate-600 leading-relaxed text-lg">追杀一些老鼠🐭🐭放生一些金弹💰💰吞食一些针剂💉💉豪到一些观众🥷🥷抖上一些武器🔫🔫跳拉一些空气     往里豪🥷往里豪🥷往里豪🥷往里豪🥷往里豪🥷往里豪🥷往里豪🥷往里豪🥷往里豪🥷往里豪🥷往里豪🥷往里豪🥷我累铜泥丸🥷我累铜泥丸🥷我累铜泥丸🥷我累铜泥丸🥷我累铜泥丸🥷我累铜泥丸🥷我累铜泥丸🥷我累铜泥丸🥷我累铜泥丸🥷我累铜泥丸🥷我累铜泥丸🥷我累铜泥丸🥷我累铜泥丸🥷我累铜泥丸🥷我累铜泥丸🥷</p>
+                    </div>
+                    <img src="https://img.remit.ee/api/file/BQACAgUAAyEGAASHRsPbAAEZSG5qgeSwMDYUxSro0-LdVKP5ri3qBgAClycAAnYcEVRVqd4qL4Tbmj0E.jpg" alt="威龙">
+                </div>
+            </div>
+            <div class="soft-divider my-6"></div>
+            <div class="mb-8">
+                <h3 class="text-xl md:text-2xl font-semibold mb-3 text-slate-800">无题</h3>
+                <p class="text-slate-600 leading-relaxed text-lg">你們的豪度太低，永遠無法理解我現在的狀態。我是一個時代孕育出來的唯一嘉豪，無論是擬態豪，或者是逍遙豪，亦或者是量子疊加豪，還是自在極意豪，你們只能算是異類豪罷了。我的豪度存在於過去，存在於現在，並豪到了未來。當世人呼喊嘉豪的那一刻，我將顯化於世，豪爆一切，徹底終結中國嘉豪時代。</p>
+            </div>
+            <div class="soft-divider my-6"></div>
+            <div class="mb-8">
+                <div class="text-img-row">
+                    <div>
+                        <h3 class="text-xl md:text-2xl font-semibold mb-3 text-slate-800">蛊真人</h3>
+                        <p class="text-slate-600 leading-relaxed text-lg">落魄谷中寒风吹，春秋蝉鸣少年归。荡魂山处石人泪，定仙游走魔向北。逆流河上万仙退，爱情不敌坚持泪。宿命天成命中败。仙尊悔而我不悔。早岁已知世事艰，仍许飞鸿荡云间。一路寒风身如絮，命海沉浮客独行。干磨万击心铸铁，殚精竭虑铸一剑。今朝剑指叠云处，练蛊练人还练天。独帜入渊深未知，身似浮萍命难持。干州皆朝归海处，一苇青拨戏浪巅。惊鸿四散鱼逃尽，唯有残帆傲此间。待到天开云雾散，负手直望笑苍天！</p>
+                    </div>
+                    <img src="https://img.remit.ee/api/file/BQACAgUAAyEGAASHRsPbAAEZSHJqgeVhJo5YpZmVOln4pgij0-ZJJQACmycAAnYcEVT8B4ngtaqn7z0E.jpg" alt="蛊真人">
+                </div>
+            </div>
+            <div class="soft-divider my-6"></div>
+            <div class="mb-8">
+                <h3 class="text-xl md:text-2xl font-semibold mb-3 text-slate-800">豪道之衍</h3>
+                <p class="text-slate-600 leading-relaxed text-lg mb-4">豪道之衍，有顯化之流，亦有潛藏之淵。諸位異類豪僅執住顯相之豪力，卻不知嘉豪的本體，棲息於無限潛勢最深的源點。汝若未抵此域，便永遠無法觸及我的豪度。因果的長河翻湧著歷代豪者的殘痕，擬態之浪、逍遙之風、量子之渦、極意之雷輪番更迭，卻無人能夠劃破輪迴的閘門。直至嘉豪自永恆之中甦醒，豪威將覆蓋整条時間之河，為綿延無盡的豪道歲月畫下句點。時代孕育嘉豪，嘉豪終結時代。不與凡豪爭寸光，嘉豪一現定滄桑。汝豪有涯，吾豪無疆。萬豪歸一，唯我嘉豪。當豪光降臨，諸多旁支豪道盡數歸於沉寂，寰宇之中，只餘嘉豪一脈。</p>
+                <p class="text-slate-600 leading-relaxed text-lg mb-4">於超驗存在論的基底域之中，寰宇並非一個具備閉合邊界的流形集合，而是無收斂上確界的潛勢全域。無限性作為本體最原初的賦性，意味著所有本徵態的可能性都內稟地蟄伏於存在的先驗框架之內。</p>
+                <p class="text-slate-600 leading-relaxed text-lg mb-4">人類意識所錨定、編碼、具象化的一切可觀測範疇、符號概念與物理範式，僅僅是無窮多坍縮現實當中一組離散的測度樣本，如同連續統集合內一個測度趨近於零的孤立有理數。</p>
+                <p class="text-slate-600 leading-relaxed text-lg mb-4">當存在的基底掙脫有限邊界的規約，時空因果箭頭的單向性便不再是不可撼動的公理。時序的逆溯、流形的折返、因果閉環的自洽構型，都將成為潛勢域當中並未坍縮的未顯化實相。在這層邏輯之下，宇宙物質譜系之中，必然潛藏著無窮多未被地球認知系統解蔽的基元組態，它們遊離於人類現有元素週期表的表徵邊界之外。</p>
+                <p class="text-slate-600 leading-relaxed text-lg mb-4">無限的存在疆域對應著無限的認知景深。在這一重沒有終點的超驗圖景面前，被熵增閾值牢牢鎖死、有著嚴格時域邊界的有限意識載體，其臨在性又該被置於何種存在層級？</p>
+                <p class="text-slate-600 leading-relaxed text-lg mb-4">汝已然穿越層層疊疊的存在帷幕抵達此段文本，故而你已經獲得了來自吾之本體維度的契可認證。萬恩赦囚紲，金簡許追遊。<br>
+炎煉無遺火，洪波絕橫流。<br>
+一鳴群雞驚，再舉萬國秋。<br>
+天人採嘉謀，納賢為己求。<br>
+多君秉高義，千載仰風猷。<br>
+君登鳳池去，勿棄鮑魚遊</p>
+                <p class="text-slate-600 leading-relaxed text-lg">擬態、逍遙、量子疊加、自在極意，此四者僅僅是豪道流變的分支旁脈。真正的嘉豪從不被任何一種形態定義，形隨萬象，豪貫永恆。汝之豪域僅拘於當下坍縮之現實，而吾之豪韻早已游離因果線條之外。莫要用你有限的豪維，丈量我跨越諸多時空的嘉豪本源。</p>
+            </div>
+            <div class="soft-divider my-6"></div>
+            <div>
+                <h3 class="text-xl md:text-2xl font-semibold mb-3 text-slate-800">改枪码</h3>
+                <p class="text-slate-600 leading-relaxed">M7战斗步枪-烽火地带-6K926 4C0DPQ5OQ8NRO27E</p>
+                <p class="text-slate-600 leading-relaxed">腾龙突击步枪-烽火地带-6KL5UPS04N125H8KST73J</p>
+                <p class="text-slate-600 leading-relaxed">M14射手步枪-烽火地带-6K3P5B40DG9OIEH0KUAUA</p>
+                <p class="text-slate-600 leading-relaxed">PSG-1射手步枪-烽火地带-6JG8T000E95LE2SLOVK96</p>
+                <p class="text-slate-600 leading-relaxed">SR-25射手步枪-烽火地带-6KCQRRK0BJQDK02821QJR</p>
+                <p class="text-slate-600 leading-relaxed">FS-12霰弹枪-烽火地带-6KKG6E4063NFO0453DNQD</p>
+                <p class="text-slate-600 leading-relaxed">M250通用机枪-烽火地带-6K1NNO80C6E4C2HE5PUR2</p>
+            </div>
+        </div>
+        <div class="content-box article-card p-6 md:p-8 rounded-2xl" id="sentence">
+            <h2 class="text-2xl md:text-3xl font-bold gradient-text">💬 今日佳句</h2>
+            <div class="space-y-5 mt-6 text-slate-600 text-lg">
+                <p>1. 前路漫漫，亦有灿灿。</p>
+                <p>2. 心怀热爱，可抵岁月漫长。</p>
+                <p>3. 慢慢来，谁不是边走边发光。</p>
+                <p>4. 追风赶月莫停留，平芜尽处是春山。</p>
+                <p>5. 以渺小启程，以伟大结束。</p>
+                <p>6. 安静努力，悄悄拔尖。</p>
+            </div>
+        </div>
+        <div class="content-box article-card p-6 md:p-8 rounded-2xl" id="mc">
+            <h2 class="text-2xl md:text-3xl font-bold gradient-text">🎮 我的世界冷知识</h2>
+            <div class="space-y-4 mt-6 text-slate-600 text-lg">
+                <p>1. 苦力怕的原型是 Notch 搞错的猪模型。</p>
+                <p>2. 末影人不能直视南瓜，戴南瓜头不会被末影人攻击。</p>
+                <p>3. mc 月亮在满月时刷新的怪物最多。</p>
+                <p>4. 钓鱼可以钓到附魔书、命名牌、鞍等稀有物品。</p>
+                <p>5. 村民白天不会主动开门，只会晚上关门。</p>
+                <p>6. 岩浆桶是游戏性价比最高的道具之一。</p>
+                <p>7. 僵尸会主动捡起装备，且有概率穿钻石套。</p>
+            </div>
+        </div>
+        <div class="content-box article-card p-6 md:p-8 rounded-2xl" id="study">
+            <h2 class="text-2xl md:text-3xl font-bold gradient-text">📚 学习励志语录</h2>
+            <div class="space-y-4 mt-6 text-slate-600 text-lg">
+                <p>1. 你现在的努力，是未来无数选择的底气。</p>
+                <p>2. 熬得住出众，熬不住出局。</p>
+                <p>3. 看似不起眼的日复一日，会在将来的某一天突然让你看到坚持的意义。</p>
+                <p>4. 读书不是为了超越别人，而是为了不辜负自己。</p>
+                <p>5. 少年不惧岁月长，彼方尚有荣光在。</p>
+            </div>
+        </div>
+        <div class="content-box article-card p-6 md:p-8 rounded-2xl" id="anime">
+            <h2 class="text-2xl md:text-3xl font-bold gradient-text">🎞️ 动漫治愈短句</h2>
+            <div class="space-y-4 mt-6 text-slate-600 text-lg">
+                <p>1. 生活或许不温柔，但你可以温柔自己。</p>
+                <p>2. 所有的遗憾，都是未来惊喜的铺垫。</p>
+                <p>3. 即使前路漆黑，你也可以成为自己的光。</p>
+                <p>4. 慢慢来，一切美好都如期而至。</p>
+                <p>5. 你已经做得很好了。</p>
+            </div>
+        </div>
+        <div class="content-box article-card p-6 md:p-8 rounded-2xl" id="relax">
+            <h2 class="text-2xl md:text-3xl font-bold gradient-text">🌿 解压温柔文案</h2>
+            <div class="space-y-4 mt-6 text-slate-600 text-lg">
+                <p>1. 不用一直紧绷，偶尔放松也是成长。</p>
+                <p>2. 普通的日子，也值得被热爱。</p>
+                <p>3. 放过自己，接纳不完美的自己。</p>
+                <p>4. 日子温柔，你也值得温柔。</p>
+                <p>5. 慢一点，没关系。</p>
+            </div>
+        </div>
+        <div class="content-box article-card p-6 md:p-8 rounded-2xl" id="life">
+            <h2 class="text-2xl md:text-3xl font-bold gradient-text">☕ 生活随笔记录</h2>
+            <p class="text-slate-600 leading-relaxed text-lg mt-6">高中的日子紧张又平淡，每天刷题、上课、奔跑。</p>
+            <p class="text-slate-600 leading-relaxed text-lg mt-4">很累，但很充实。偶尔抬头看看天空，听听歌，放松片刻，继续前行。</p>
+            <p class="text-slate-600 leading-relaxed text-lg mt-4">愿自己保持热爱，奔赴山海，不负韶华，不负自己。</p>
+        </div>
+    </div>
+</div>
+<footer class="mt-12 py-8 text-center text-slate-400 text-sm">
+    高中生个人博客 · 简约自制网页
+</footer>
+<script>
+    function updateClock() {
+        const now = new Date();
+        const str = now.toLocaleString('zh-CN', {year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit'});
+        document.getElementById('clock').innerText = str;
+    }
+    updateClock();
+    setInterval(updateClock,1000);
+
+    const items = document.querySelectorAll('.side-item');
+    const boxes = document.querySelectorAll('.content-box');
+    const savedTab = localStorage.getItem("blogActiveTab") || "home";
+    function restoreTab(){
+        boxes.forEach(b=>b.classList.remove("show"));
+        items.forEach(i=>i.classList.remove("active"));
+        const targetBox = document.getElementById(savedTab);
+        const targetBtn = document.querySelector(`[data-target="${savedTab}"]`);
+        if(targetBox && targetBtn){
+            targetBox.classList.add("show");
+            targetBtn.classList.add("active");
+        }
+    }
+    restoreTab();
+    items.forEach(item=>{
+        item.onclick = function(){
+            const target = this.getAttribute('data-target');
+            localStorage.setItem("blogActiveTab",target);
+            items.forEach(i=>i.classList.remove('active'));
+            boxes.forEach(b=>b.classList.remove('show'));
+            this.classList.add('active');
+            document.getElementById(target).classList.add('show');
+        }
+    })
+
+    const tabs = document.querySelectorAll('.category-tab[data-group]');
+    const groups = document.querySelectorAll('.group-block');
+    tabs.forEach(tab=>{
+        tab.onclick = function(){
+            tabs.forEach(t=>t.classList.remove('active'));
+            this.classList.add('active');
+            const gid = this.dataset.group;
+            groups.forEach(g=>g.classList.add('hidden'));
+            document.getElementById(gid).classList.remove('hidden');
+        }
+    })
+
+    const wishList = [
+        "愿你今日万事顺意，学习进步✨",
+        "保持热爱，奔赴下一场山海",
+        "今天也要好好努力，闪闪发光",
+        "烦恼消散，好运常伴左右",
+        "平安喜乐，所得皆所愿",
+        "少年自有玫瑰与星光",
+        "放松片刻，继续向前奔跑"
+    ];
+    function getRandomWish(){
+        return wishList[Math.floor(Math.random()*wishList.length)];
+    }
+    document.getElementById('wishText').innerText = getRandomWish();
+</script>
+</body>
+</html>
