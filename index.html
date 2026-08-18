@@ -66,6 +66,7 @@
             border: 1px solid rgba(226, 232, 240, 0.9);
         }
         .side-item {
+            cursor: pointer;
             transition:
                 background 0.4s cubic-bezier(0.2, 0, 0.2, 1.4),
                 color 0.4s cubic-bezier(0.2, 0, 0.2, 1.4),
@@ -86,6 +87,7 @@
             box-shadow: 0 10px 30px rgba(37, 99, 235, 0.22);
         }
         .category-tab {
+            /*普通内部切换标签：使用默认文本光标 text，不显示手指*/
             transition:
                 background 0.35s cubic-bezier(0.2, 0, 0.2, 1.3),
                 color 0.35s cubic-bezier(0.2, 0, 0.2, 1.3),
@@ -93,6 +95,10 @@
                 box-shadow 0.35s cubic-bezier(0.2, 0, 0.2, 1.3);
             transform: scale(1) translateZ(0);
             will-change: transform, background, box-shadow;
+        }
+        /*只有跳转外部页面的标签才显示手指光标*/
+        .category-tab.link-tab {
+            cursor: pointer;
         }
         .category-tab:hover:not(.active) {
             background: rgba(59, 130, 246, 0.06);
@@ -219,9 +225,10 @@
             <div class="category-tab active px-3 py-1.5 rounded-full text-sm font-medium" data-group="homeGroup">首页综合</div>
             <div class="category-tab px-3 py-1.5 rounded-full text-sm font-medium" data-group="gameGroup">游戏娱乐</div>
             <div class="category-tab px-3 py-1.5 rounded-full text-sm font-medium" data-group="textGroup">文字治愈</div>
-            <div class="category-tab px-3 py-1.5 rounded-full text-sm font-medium glow-btn" onclick="location.href='diary.html'">☞日记专区</div>
-            <div class="category-tab px-3 py-1.5 rounded-full text-sm font-medium glow-btn" onclick="location.href='album.html'">☞回忆相册</div>
-            <div class="category-tab px-3 py-1.5 rounded-full text-sm font-medium glow-btn" onclick="location.href='mc_server.html'">☞Minecraft服务器</div>
+            <!--跳转页面，增加link-tab类，悬浮显示手指-->
+            <div class="category-tab link-tab px-3 py-1.5 rounded-full text-sm font-medium glow-btn" onclick="location.href='diary.html'">☞日记专区</div>
+            <div class="category-tab link-tab px-3 py-1.5 rounded-full text-sm font-medium glow-btn" onclick="location.href='album.html'">☞回忆相册</div>
+            <div class="category-tab link-tab px-3 py-1.5 rounded-full text-sm font-medium glow-btn" onclick="location.href='mc_server.html'">☞Minecraft服务器</div>
         </div>
         <div class="soft-divider mb-4"></div>
         <div class="group-block flex flex-col gap-3" id="homeGroup">
@@ -419,7 +426,6 @@
     }
     updateClock();
     setInterval(updateClock,1000);
-
     const items = document.querySelectorAll('.side-item');
     const boxes = document.querySelectorAll('.content-box');
     const savedTab = localStorage.getItem("blogActiveTab") || "home";
@@ -444,7 +450,6 @@
             document.getElementById(target).classList.add('show');
         }
     })
-
     const tabs = document.querySelectorAll('.category-tab[data-group]');
     const groups = document.querySelectorAll('.group-block');
     tabs.forEach(tab=>{
@@ -456,7 +461,6 @@
             document.getElementById(gid).classList.remove('hidden');
         }
     })
-
     const wishList = [
         "愿你今日万事顺意，学习进步✨",
         "保持热爱，奔赴下一场山海",
